@@ -2,6 +2,8 @@
 #include <string>
 #include "complex.h"
 
+//======================COMPLEX_CLASS======================
+
 // CONSTRUCTOR
 Complex::Complex(long double _re, long double _im) {
     real = _re;
@@ -216,4 +218,128 @@ long double Complex::abs() const {
 // MY ARG FUNC FOR COMPLEX
 long double Complex::arg() const {
     return atan2l(imag, real);
+}
+
+// CONVERTING POLAR CORDS TO COMPLEX
+Complex polar2Complex(const Polar &_val) {
+    long double _x = _val.r() * cosl(_val.p());
+    long double _y = _val.r() * sinl(_val.p());
+
+    return Complex(_x, _y);
+}
+
+//======================POLAR_CLASS======================
+
+// CONVERTING COMPLEX CORDS TO POLAR
+Polar complex2Polar(const Complex &_val) {
+    return Polar(_val.abs(), _val.arg());
+}
+
+// CONSTRUCTOR
+Polar::Polar(long double _rho, long double _phi) {
+    rho = _rho;
+    phi = _phi;
+}
+
+Polar::Polar(long double _val) {
+    rho = _val;
+    phi = 0;
+}
+
+Polar::Polar() {
+    rho = 0;
+    phi = 0;
+}
+
+// GETTERS/SETTERS
+long double Polar::r() const {
+    return rho;
+}
+
+long double Polar::p() const {
+    return phi;
+}
+
+void Polar::r(long double _val) {
+    rho = _val;
+}
+
+void Polar::p(long double _val) {
+    phi = _val;
+}
+
+// OVERLOADING "="
+Polar& Polar::operator=(long double _val) {
+    rho = _val;
+    phi = atan2l(0, _val);
+
+    return *this;
+}
+
+// OVERLOADING "=="
+bool Polar::operator==(const Polar &_val) const {
+    return polar2Complex(*this) == polar2Complex(_val);
+}
+
+// OVERLOADING "!="
+bool Polar::operator!=(const Polar &_val) const {
+    return !operator==(_val);
+}
+
+// OVERLOADING "+="
+Polar& Polar::operator+=(const Polar &_val) {
+    Complex _buff = polar2Complex(*this) + polar2Complex(_val);
+    rho = complex2Polar(_buff).r();
+    phi = complex2Polar(_buff).p();
+
+    return *this;
+}
+
+// OVERLOADING "-="
+Polar& Polar::operator-=(const Polar &_val) {
+    Complex _buff = polar2Complex(*this) - polar2Complex(_val);
+    rho = complex2Polar(_buff).r();
+    phi = complex2Polar(_buff).p();
+
+    return *this;
+}
+
+// OVERLOADING "*="
+Polar& Polar::operator*=(const Polar &_val) {
+    rho *= _val.r();
+    phi += _val.p();
+
+    return *this;
+}
+
+// OVERLOADING "/="
+Polar& Polar::operator/=(const Polar &_val) {
+    rho /= _val.r();
+    phi -= _val.p();
+
+    return *this;
+}
+
+// OVERLOADING "+"
+Polar operator+(const Polar &_pLeft, const Polar &_pRight) {
+    return complex2Polar(polar2Complex(_pLeft) + polar2Complex(_pRight));
+}
+
+// OVERLOADING "-"
+Polar operator-(const Polar &_pLeft, const Polar &_pRight) {
+    return complex2Polar(polar2Complex(_pLeft) - polar2Complex(_pRight));
+}
+
+// OVERLOADING "*"
+Polar operator*(Polar _pLeft, const Polar &_pRight) {
+    _pLeft *= _pRight;
+
+    return _pLeft;
+}
+
+// OVERLOADING "/"
+Polar operator/(Polar _pLeft, const Polar &_pRight) {
+    _pLeft /= _pRight;
+
+    return _pLeft;
 }

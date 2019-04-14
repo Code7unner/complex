@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <tgmath.h>
 #include "complex.h"
 
 //Complex numbers test
@@ -32,7 +31,6 @@ TEST(ComplexNumbersTests, divTest) {
     EXPECT_EQ(x1 / x2, Complex(-0.99, 1.32));
 }
 
-
 TEST(ComplexNumbersTests, getSetTest) {
     Complex x1(2.0, 5.0);
     x1.im(9.0);
@@ -52,3 +50,5 @@ TEST(ComplexNumbersTests, argTest) {
     Complex x1(3.0, 1.0), x2(9.0, 3.0);
     EXPECT_EQ(x1.arg(), x2.arg());
 }
+
+//TODO: Complete all tests

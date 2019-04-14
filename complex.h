@@ -6,6 +6,8 @@
 
 #define EPS 1e-9
 
+class Polar;
+
 class Complex {
 public:
     Complex(long double, long double);
@@ -59,8 +61,49 @@ public:
     long double abs() const;
     long double arg() const;
 
+    friend Complex polar2Complex(const Polar &);
+
+    //TODO: pow() - func for Complex cords
+
 private:
     long double real, imag;
+};
+
+class Polar {
+public:
+    Polar(long double, long double);
+    explicit Polar(long double);
+    Polar();
+
+    long double r() const;
+    long double p() const;
+    void r(long double);
+    void p(long double);
+
+    ~Polar() = default;
+
+    Polar &operator=(const Polar &) = default;
+    Polar &operator=(long double);
+
+    bool operator==(const Polar &) const;
+    bool operator!=(const Polar &) const;
+
+    Polar &operator+=(const Polar &);
+    Polar &operator-=(const Polar &);
+    Polar &operator*=(const Polar &);
+    Polar &operator/=(const Polar &);
+
+    friend Polar operator+(const Polar &, const Polar &);
+    friend Polar operator-(const Polar &, const Polar &);
+    friend Polar operator*(Polar, const Polar &);
+    friend Polar operator/(Polar, const Polar &);
+
+    friend Polar complex2Polar(const Complex &);
+
+    //TODO: pow() - func for Polar cords
+
+private:
+    long double rho, phi;
 };
 
 #endif
