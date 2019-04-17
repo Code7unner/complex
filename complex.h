@@ -63,8 +63,6 @@ public:
 
     friend Complex polar2Complex(const Polar &);
 
-    //TODO: pow() - func for Complex cords
-
 private:
     long double real, imag;
 };
@@ -100,7 +98,7 @@ public:
 
     friend Polar complex2Polar(const Complex &);
 
-    //TODO: pow() - func for Polar cords
+    Polar pow(Polar, unsigned int);
 
 private:
     long double rho, phi;

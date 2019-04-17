@@ -343,3 +343,11 @@ Polar operator/(Polar _pLeft, const Polar &_pRight) {
 
     return _pLeft;
 }
+
+// MY POW() FUNCTION
+Polar Polar::pow(Polar x, unsigned int y) {
+    x.rho(powl(x.rho(), y));
+    x.phi(x.phi() * y);
+
+    return complex2Polar(x);
+}
