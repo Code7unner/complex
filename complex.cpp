@@ -5,10 +5,7 @@
 //======================COMPLEX_CLASS======================
 
 // CONSTRUCTOR
-Complex::Complex(long double _re, long double _im) {
-    real = _re;
-    imag = _im;
-}
+Complex::Complex(long double _re, long double _im) : real(_re), imag(_im) {}
 
 Complex::Complex(long double _val) {
     real = _val;
@@ -18,6 +15,11 @@ Complex::Complex(long double _val) {
 Complex::Complex() {
     real = 0;
     imag = 0;
+}
+
+Complex::Complex(Polar n) {
+    real = n.r() * cosl(n.p());
+    imag = n.r() * sinl(n.p());
 }
 
 // GETTERS/SETTERS
@@ -220,6 +222,11 @@ long double Complex::arg() const {
     return atan2l(imag, real);
 }
 
+// MY POW() FUNCTION
+Complex pow(const Complex &x, uint32_t y) {
+    return Complex(pow(Polar(x), y));
+}
+
 // CONVERTING POLAR CORDS TO COMPLEX
 Complex polar2Complex(const Polar &_val) {
     long double _x = _val.r() * cosl(_val.p());
@@ -236,10 +243,7 @@ Polar complex2Polar(const Complex &_val) {
 }
 
 // CONSTRUCTOR
-Polar::Polar(long double _rho, long double _phi) {
-    rho = _rho;
-    phi = _phi;
-}
+Polar::Polar(long double _rho, long double _phi) : rho(_rho), phi(_phi) {}
 
 Polar::Polar(long double _val) {
     rho = _val;
@@ -249,6 +253,11 @@ Polar::Polar(long double _val) {
 Polar::Polar() {
     rho = 0;
     phi = 0;
+}
+
+Polar::Polar(Complex n) {
+    rho = n.abs();
+    phi = n.arg();
 }
 
 // GETTERS/SETTERS
@@ -278,7 +287,11 @@ Polar& Polar::operator=(long double _val) {
 
 // OVERLOADING "=="
 bool Polar::operator==(const Polar &_val) const {
-    return polar2Complex(*this) == polar2Complex(_val);
+    return Complex(*this) == Complex(_val);
+}
+
+bool Polar::operator==(const Complex &_val) const {
+    return Complex(*this) == _val;
 }
 
 // OVERLOADING "!="
@@ -286,20 +299,40 @@ bool Polar::operator!=(const Polar &_val) const {
     return !operator==(_val);
 }
 
+bool Polar::operator!=(const Complex &_val) const {
+    return !operator==(_val);
+}
+
 // OVERLOADING "+="
 Polar& Polar::operator+=(const Polar &_val) {
-    Complex _buff = polar2Complex(*this) + polar2Complex(_val);
-    rho = complex2Polar(_buff).r();
-    phi = complex2Polar(_buff).p();
+    auto t = *this + _val;
+    rho = t.r();
+    phi = t.p();
+
+    return *this;
+}
+
+Polar &Polar::operator+=(long double _val) {
+    auto t = *this + _val;
+    rho = t.r();
+    phi = t.p();
 
     return *this;
 }
 
 // OVERLOADING "-="
 Polar& Polar::operator-=(const Polar &_val) {
-    Complex _buff = polar2Complex(*this) - polar2Complex(_val);
-    rho = complex2Polar(_buff).r();
-    phi = complex2Polar(_buff).p();
+    auto t = *this - _val;
+    rho = t.r();
+    phi = t.p();
+
+    return *this;
+}
+
+Polar &Polar::operator-=(long double _val) {
+    auto t = *this - _val;
+    rho = t.r();
+    phi = t.p();
 
     return *this;
 }
@@ -312,6 +345,11 @@ Polar& Polar::operator*=(const Polar &_val) {
     return *this;
 }
 
+Polar &Polar::operator*=(long double val) {
+    rho *= val;
+    return *this;
+}
+
 // OVERLOADING "/="
 Polar& Polar::operator/=(const Polar &_val) {
     rho /= _val.r();
@@ -320,14 +358,39 @@ Polar& Polar::operator/=(const Polar &_val) {
     return *this;
 }
 
+Polar &Polar::operator/=(long double val) {
+    rho /= val;
+    return *this;
+}
+
 // OVERLOADING "+"
 Polar operator+(const Polar &_pLeft, const Polar &_pRight) {
-    return complex2Polar(polar2Complex(_pLeft) + polar2Complex(_pRight));
+    return Polar(Complex(_pLeft) + Complex(_pRight));
+}
+
+Polar operator+(const Polar &_pLeft, long double _pRight) {
+    return Polar(Complex(_pLeft) + _pRight);
+}
+
+Polar operator+(long double _pLeft, const Polar &_pRight) {
+    return _pRight + _pLeft;
 }
 
 // OVERLOADING "-"
 Polar operator-(const Polar &_pLeft, const Polar &_pRight) {
-    return complex2Polar(polar2Complex(_pLeft) - polar2Complex(_pRight));
+    return Polar(Complex(_pLeft) - Complex(_pRight));
+}
+
+Polar operator-(const Polar &_pLeft, long double _pRight) {
+    return Polar(Complex(_pLeft) - _pRight);
+}
+
+Polar operator-(long double _pLeft, const Polar &_pRight) {
+    return -_pRight + _pLeft;
+}
+
+Polar operator-(Polar val) {
+    return val * -1;
 }
 
 // OVERLOADING "*"
@@ -337,6 +400,16 @@ Polar operator*(Polar _pLeft, const Polar &_pRight) {
     return _pLeft;
 }
 
+Polar operator*(Polar _pLeft, long double _pRight) {
+    _pLeft *= _pRight;
+    return _pLeft;
+}
+
+Polar operator*(long double _pLeft, Polar _pRight) {
+    _pRight *= _pLeft;
+    return _pRight;
+}
+
 // OVERLOADING "/"
 Polar operator/(Polar _pLeft, const Polar &_pRight) {
     _pLeft /= _pRight;
@@ -344,10 +417,19 @@ Polar operator/(Polar _pLeft, const Polar &_pRight) {
     return _pLeft;
 }
 
-// MY POW() FUNCTION
-Polar Polar::pow(Polar x, unsigned int y) {
-    x.rho(powl(x.rho(), y));
-    x.phi(x.phi() * y);
+Polar operator/(Polar _pLeft, long double _pRight) {
+    _pLeft /= _pRight;
+    return _pLeft;
+}
 
-    return complex2Polar(x);
+Polar operator/(long double _pLeft, const Polar &_pRight) {
+    return Polar(Complex(_pLeft, 0)) / _pRight;
+}
+
+// MY POW() FUNCTION
+Polar pow(Polar x, uint32_t y) {
+    x.r(powl(x.r(), y));
+    x.p(x.p() * y);
+
+    return Polar(Complex(x));
 }
