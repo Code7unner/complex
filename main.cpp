@@ -28,8 +28,19 @@ TEST(ComplexNumbersTests, minusTest) {
 }
 
 TEST(ComplexNumbersTests, divTest) {
-    Complex x1(2.0, 4.0), x2(3.3, -6.6);
-    EXPECT_EQ(x1 / x2, Complex(-0.99, 1.32));
+    Complex x1(6, 12), x2(3, 6);
+    auto b = 2;
+    EXPECT_EQ(x1 / b, Complex(3, 6));
+    x1 /= b;
+    EXPECT_EQ(x1, Complex(3, 6));
+}
+
+TEST(ComplexNumbersTests, multiplicationTest) {
+    Complex x1(2, 3), x2(4, 6);
+    EXPECT_EQ(x1 * x2, Complex(-10, 24));
+    EXPECT_EQ(x2 * x1, Complex(-10, 24));
+    x1 *= x2;
+    EXPECT_EQ(x1, Complex(-10, 24));
 }
 
 TEST(ComplexNumbersTests, getSetTest) {
